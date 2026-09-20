@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Matakuliah;
 use Illuminate\Http\Request;
 
 class MatakuliahController extends Controller
@@ -37,19 +38,12 @@ class MatakuliahController extends Controller
     public function index(Request $request)
     {
         $cari = $request->query('cari');
-        $matakuliah = $this->matakuliah;
-
-        if ($cari) {
-            $matakuliah = collect($matakuliah)
-                ->filter(function ($mk) use ($cari) {
-                    return str_contains(
-                        strtolower($mk['nama']),
-                        strtolower($cari)
-                    );
-                })
-                ->values()
-                ->all();
-        }
+        $matakuliah = Matakuliah::query()
+            ->when($cari, function ($query, $cari) {
+                $query->where('nama', 'like', "%{$cari}%");
+            })
+            ->orderBy('kode')
+            ->get();
 
         return view('matakuliah.index', [
             'matakuliah' => $matakuliah,
@@ -59,8 +53,7 @@ class MatakuliahController extends Controller
 
     public function show($kode)
     {
-        $matakuliah = collect($this->matakuliah)
-            ->firstWhere('kode', $kode);
+        $matakuliah = Matakuliah::where('kode', $kode)->firstOrFail();
 
         return view('matakuliah.show', [
             'matakuliah' => $matakuliah,
