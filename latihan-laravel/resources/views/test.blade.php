@@ -9,10 +9,10 @@
     $cari = "<script>alert('hack')</script>";
 @endphp
 
-<h4>Escaped (aman):</h4>
+<h4>Escaped</h4>
 <p>{{ $cari }}</p>
 
-<h4>Raw / Unescaped (bahaya):</h4>
+<h4>Raw / Unescaped</h4>
 <p>{!! $cari !!}</p>
 
 </body>
