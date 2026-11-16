@@ -42,6 +42,9 @@ if errors.As(err, &galatFiber) {
 kode = galatFiber.Code
 pesan = galatFiber.Message
 }
+if kode == fiber.StatusInternalServerError {
+    log.Println("Galat internal:", err.Error())
+}
 return c.Status(kode).JSON(fiber.Map{
 "sukses": false,
 "pesan": pesan,

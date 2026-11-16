@@ -27,16 +27,20 @@ func Daftarkan(app *fiber.App, konf config.Konfigurasi) {
 
 	terlindungi := api.Group("", middleware.Autentikasi())
 	terlindungi.Get("/auth/profil", handler.Profil)
+	terlindungi.Post("/auth/segarkan", handler.Segarkan)
+	
 	mahasiswa := terlindungi.Group("/mahasiswa")
+	terlindungi.Post("/auth/logout", handler.Logout)
+
 
 	// mahasiswa := api.Group("/mahasiswa")
 	mahasiswa.Get("/", handler.DaftarMahasiswa)
-	mahasiswa.Post("/", handler.BuatMahasiswa, middleware.HanyaPeran("admin","dosen"))
+	mahasiswa.Post("/", middleware.HanyaPeran("admin", "dosen"), handler.BuatMahasiswa)
 	mahasiswa.Get("/:id", handler.DetailMahasiswa)
-	mahasiswa.Put("/:id", handler.PerbaruiMahasiswa, middleware.HanyaPeran("admin", "dosen"))
-	mahasiswa.Delete("/:id", handler.HapusMahasiswa, middleware.HanyaPeran("admin"))
+	mahasiswa.Put("/:id", middleware.HanyaPeran("admin", "dosen"), handler.PerbaruiMahasiswa)
+	mahasiswa.Delete("/:id", middleware.HanyaPeran("admin"), handler.HapusMahasiswa)
 	mahasiswa.Post("/:id/pulihkan", handler.PulihkanMahasiswa)
-	
+
 	matakuliah := terlindungi.Group("/matakuliah")
 	// matakuliah := api.Group("/matakuliah")
 	matakuliah.Get("/", handler.DaftarMatakuliah)
