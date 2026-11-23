@@ -9,7 +9,10 @@ recoverer "github.com/gofiber/fiber/v3/middleware/recover"
 "latihan-fiber-api/internal/config"
 "latihan-fiber-api/internal/middleware"
 "latihan-fiber-api/internal/router"
+"github.com/gofiber/fiber/v3/middleware/cors"
 )
+
+
 func main() {
 konf := config.Muat()
 config.HubungkanBasisData(konf)
@@ -24,6 +27,13 @@ app.Use(requestid.New())
 app.Use(logger.New())
 app.Use(recoverer.New())
 app.Use(middleware.WaktuProses())
+app.Use(cors.New(cors.Config{
+AllowOrigins: []string{"http://localhost:5173"},
+AllowMethods: []string{"GET", "POST", "PUT", "PATCH", "DELETE",
+"OPTIONS"},
+AllowHeaders: []string{"Origin", "Content-Type", "Accept",
+"Authorization"},
+}))
 router.Daftarkan(app, konf)
 app.Use(func(c fiber.Ctx) error {
 return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -31,6 +41,7 @@ return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 "pesan": "Endpoint tidak tersedia",
 })
 })
+
 
 log.Fatal(app.Listen(":" + konf.Port))
 }
